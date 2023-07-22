@@ -141,19 +141,27 @@ def load_data(table, data, cursor):
 if __name__ == '__main__':
     books = add_fake_data(get_parse_book_data(get_book_links(url)))
     readers = gen_fake_reader(4)
-
     books_readers = gen_fake_book_reader(
         books_count=len(books),
         readers_count=len(readers),
         count_rows=6
     )
-
     connection, cursor = connection_to_db()
-    load_data('public.book', books, cursor)
-    load_data('public.reader', readers, cursor)
-    load_data('public.reader_book', books_readers, cursor)
 
-    # сохраняем изменения и закрываем соединение
-    connection.commit()
+    try:
+        # начало транзакции
+        connection.begin()
+
+        load_data('public.book', books, cursor)
+        load_data('public.reader', readers, cursor)
+        load_data('public.reader_book', books_readers, cursor)
+
+        # сохраняем изменения
+        connection.commit()
+    except Exception as error:
+        connection.rollback()
+        print(f'Ошибка при выполнении транзакции: {error}')
+
+    # закрываем соединение
     cursor.close()
     connection.close()
