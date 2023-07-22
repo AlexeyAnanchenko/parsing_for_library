@@ -1,12 +1,12 @@
 version: "3.8"
 services:
-  # app:
-  #   build: ./app/
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   links:
-  #     - db
+  parser:
+    build: ./parser
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db
   db:
     image: postgres:latest
     ports:

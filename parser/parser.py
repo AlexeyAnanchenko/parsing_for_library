@@ -18,7 +18,7 @@ faker = Faker()
 db_name = 'postgres_db'
 db_user = 'postgres'
 db_pass = 'postgres'
-db_host = 'localhost'
+db_host = 'db'  # название приложения БД в docker-compose
 db_port = '5432'
 
 
@@ -43,7 +43,8 @@ def get_book_links(url):
 
 
 def get_parse_book_data(links):
-    # данные для БД будем хранить в виде списка словарей, где каждый словарь - строка таблицы 
+    # данные для БД будем хранить в виде списка словарей,
+    # где каждый словарь - строка таблицы 
     result = []
 
     for link in links:
@@ -137,7 +138,6 @@ def load_data(table, data, cursor):
     )
 
 
-
 if __name__ == '__main__':
     books = add_fake_data(get_parse_book_data(get_book_links(url)))
     readers = gen_fake_reader(4)
@@ -157,4 +157,3 @@ if __name__ == '__main__':
     connection.commit()
     cursor.close()
     connection.close()
-    
