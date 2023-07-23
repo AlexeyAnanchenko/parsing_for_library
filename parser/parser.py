@@ -44,7 +44,7 @@ def get_book_links(url):
 
 def get_parse_book_data(links):
     # данные для БД будем хранить в виде списка словарей,
-    # где каждый словарь - строка таблицы 
+    # где каждый словарь - строка таблицы
     result = []
 
     for link in links:
@@ -62,8 +62,10 @@ def get_parse_book_data(links):
             elif el.find('th').text == 'Availability':
                 text = el.find('td').text
                 i_symb = text.find('(')
-                dict_for_elm['count_instances'] = int(text[i_symb + 1: i_symb + 2])
-        
+                dict_for_elm['count_instances'] = int(
+                    text[i_symb + 1: i_symb + 2]
+                )
+
         result.append(dict_for_elm)
     return result
 
@@ -103,10 +105,12 @@ def gen_fake_book_reader(books_count, readers_count, count_rows):
             'reader_id': faker.random_int(min=1, max=readers_count),
             'book_id': faker.random_int(min=1, max=books_count),
             'date_receipt': faker.date_between(
-                                start_date=date(2022, 10, 1), end_date=date(2022, 10, 10)
+                                start_date=date(2022, 10, 1),
+                                end_date=date(2022, 10, 10)
                             ).strftime('%Y-%m-%d'),
             'date_return': faker.date_between(
-                                start_date=date(2022, 10, 10), end_date=date(2022, 10, 20)
+                                start_date=date(2022, 10, 10),
+                                end_date=date(2022, 10, 20)
                             ).strftime('%Y-%m-%d')
         })
 
@@ -116,7 +120,8 @@ def gen_fake_book_reader(books_count, readers_count, count_rows):
 def connection_to_db():
     # подключаемся к БД
     connection = psycopg2.connect(
-        host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_pass,
+        host=db_host, port=db_port, dbname=db_name,
+        user=db_user, password=db_pass,
     )
     cursor = connection.cursor()
     return connection, cursor
@@ -127,7 +132,8 @@ def load_data(table, data, cursor):
     headers = data[0].keys()
     headers_for_query = ', '.join(headers)
 
-    # параметризированный запрос executemany принимает значения каждой строки в виде кортежа
+    # параметризированный запрос executemany принимает значения
+    # каждой строки в виде кортежа
     values = [tuple(row.values()) for row in data]
 
     # создём шаблон запроса с учётом неизвестного кол-ва атрибутов на входе
@@ -149,9 +155,7 @@ if __name__ == '__main__':
     connection, cursor = connection_to_db()
 
     try:
-        # начало транзакции
-        connection.begin()
-
+        # начало транзакции запускается автоматически
         load_data('public.book', books, cursor)
         load_data('public.reader', readers, cursor)
         load_data('public.reader_book', books_readers, cursor)
